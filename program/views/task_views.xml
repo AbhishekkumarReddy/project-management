@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="task_kanban_view" model="ir.ui.view">
+            <field name="name">task.kanban</field>
+            <field name="model">program.task</field>
+            <field name="arch" type="xml">
+                <kanban default_group_by="deliverable_id"
+                        records_draggable="false"
+                        group_create="false">
+                    <field name="name"/>
+                    <field name="description"/>
+                    <field name="deliverable_id"/>
+                    <field name="user_id"/>
+                    <field name="planned_working_hours" string="Planned Hours"/>
+                    <field name="effective_working_hours" string="Logged Hours"/>
+                    <field name="progress" widget="progressbar"/>
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div class="oe_kanban_global_click">
+                                <div class="oe_kanban_details">
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <strong><field name="name"/></strong>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="float-right">
+                                                <field name="user_id" widget="many2one_avatar_user"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div>&amp;nbsp;</div>
+                                    <div class="oe_kanban_bottom_right">
+                                        <field name="progress" widget="progressbar"/>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+        <record id="task_form_view" model="ir.ui.view">
+            <field name="name">task.form</field>
+            <field name="model">program.task</field>
+            <field name="arch" type="xml">
+                <form string="Task">
+                    <group>
+                        <group>
+                            <field name="company_id" invisible="1"/>
+                            <field name="name"/>
+                            <field name="description"/>
+                            <field name="deliverable_id"/>
+                        </group>
+                        <group>
+                            <field name="user_id"/>
+                            <field name="planned_working_hours" string="Planned Hours"/>
+                            <field name="effective_working_hours" string="Logged Hours"/>
+                            <field name="progress" widget="progressbar"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Sub Tasks">
+                            <field name="sub_task_ids">
+                                <tree string="Sub Tasks">
+                                    <field name="name"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </form>
+            </field>
+        </record>
+
+        <record id="task_tree_view" model="ir.ui.view">
+            <field name="name">task.tree</field>
+            <field name="model">program.task</field>
+            <field name="arch" type="xml">
+                <tree string="Task">
+                    <field name="name"/>
+                    <field name="deliverable_id"/>
+                    <field name="user_id"/>
+                    <field name="planned_working_hours" string="Planned Hours"/>
+                    <field name="effective_working_hours" string="Logged Hours"/>
+                    <field name="state"/>
+                    <field name="progress" widget="progressbar"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="task_graph_view" model="ir.ui.view">
+            <field name="name">task.graph</field>
+            <field name="model">program.task</field>
+            <field name="arch" type="xml">
+                <graph string="Task">
+                    <field name="name"/>
+                    <field name="description"/>
+                    <field name="deliverable_id"/>
+                </graph>
+            </field>
+        </record>
+
+        <record id="task_search_view" model="ir.ui.view">
+            <field name="name">task.search</field>
+            <field name="model">program.task</field>
+            <field name="arch" type="xml">
+                <search string="Task">
+                    <field name="name"/>
+                    <field name="description"/>
+                    <field name="deliverable_id"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="action_view_all_task" model="ir.actions.act_window">
+            <field name="name">My Tasks</field>
+            <field name="res_model">program.task</field>
+            <field name="view_mode">kanban,tree,form,graph</field>
+            <field name="view_id" ref="task_kanban_view"/>
+            <field name="domain">[('user_id', '=', uid)]</field>
+            <field name="context">{'search_default_my_tasks': 1}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No tasks found. Let's create one!
+                </p>
+            </field>
+        </record>
+
+        <menuitem id="menu_task_management"
+                  name="Tasks"
+                  parent="program_menu"
+                  action="action_view_all_task"
+                    sequence="7"
+                  groups="base.group_no_one,group_program_user"/>
+
+    </data>
+</odoo>

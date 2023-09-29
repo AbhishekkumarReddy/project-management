@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="deliverable_kanban_view" model="ir.ui.view">
+            <field name="name">deliverable.kanban</field>
+            <field name="model">program.deliverable</field>
+            <field name="arch" type="xml">
+                <kanban string="Deliverable"
+                        default_group_by="study_id"
+                        records_draggable="false"
+                        group_create="false">
+                    <field name="name"/>
+                    <field name="description"/>
+                    <field name="study_id"/>
+                    <field name="user_id"/>
+                    <field name="planned_working_hours"/>
+                    <field name="effective_working_hours"/>
+                    <field name="progress"/>
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div t-attf-class="oe_kanban_content oe_kanban_global_click o_kanban_get_form">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <strong><field name="name"/></strong>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div t-if="record.planned_working_hours.raw_value or record.effective_working_hours.raw_value" class="text-muted o_row">
+                                            <span class="fa fa-clock-o mr-2" title="Hours"></span><field name="planned_working_hours"/>
+                                            <i t-if="record.planned_working_hours.raw_value and record.effective_working_hours.raw_value" class="fa fa-long-arrow-right mx-2 oe_read_only" aria-label="Arrow icon" title="Arrow"/>
+                                            <field name="effective_working_hours"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div t-if="record.progress.raw_value" class="text-muted o_row">
+                                            <span class="fa fa-bar-chart mr-2" title="Progress"></span><field name="progress"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+        <record id="deliverable_form_view" model="ir.ui.view">
+            <field name="name">deliverable.form</field>
+            <field name="model">program.deliverable</field>
+            <field name="arch" type="xml">
+                <form string="Deliverable">
+                    <group>
+                        <group>
+                            <field name="company_id" invisible="1"/>
+                            <field name="name"/>
+                            <field name="description"/>
+                            <field name="study_id"/>
+                        </group>
+                        <group>
+                            <field name="user_id"/>
+                            <field name="planned_working_hours" string="Planned Hours"/>
+                            <field name="effective_working_hours" string="Logged Hours"/>
+                            <field name="progress" widget="progressbar"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Tasks">
+                            <field name="task_ids">
+                                <tree string="Tasks">
+                                    <field name="name"/>
+                                    <field name="effective_working_hours" string="Logged Hours"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </form>
+            </field>
+        </record>
+
+        <record id="deliverable_tree_view" model="ir.ui.view">
+            <field name="name">deliverable.tree</field>
+            <field name="model">program.deliverable</field>
+            <field name="arch" type="xml">
+                <tree string="Deliverable">
+                    <field name="name"/>
+                    <field name="study_id"/>
+                    <field name="state"/>
+                    <field name="user_id"/>
+                    <field name="planned_working_hours"/>
+                    <field name="effective_working_hours"/>
+                    <field name="progress" widget="progressbar"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="deliverable_graph_view" model="ir.ui.view">
+            <field name="name">deliverable.graph</field>
+            <field name="model">program.deliverable</field>
+            <field name="arch" type="xml">
+                <graph string="Deliverable">
+                    <field name="name"/>
+                    <field name="planned_working_hours" type="measure"/>
+                    <field name="effective_working_hours" type="measure"/>
+                    <field name="progress" type="measure"/>
+                </graph>
+            </field>
+        </record>
+
+        <record id="deliverable_search_view" model="ir.ui.view">
+            <field name="name">deliverable.search</field>
+            <field name="model">program.deliverable</field>
+            <field name="arch" type="xml">
+                <search string="Deliverable">
+                    <field name="name"/>
+                    <field name="description"/>
+                    <field name="study_id"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="action_view_all_deliverables" model="ir.actions.act_window">
+            <field name="name">Deliverables</field>
+            <field name="res_model">program.deliverable</field>
+            <field name="domain">[]</field>
+            <field name="view_mode">kanban,tree,form,graph</field>
+            <field name="view_id" ref="deliverable_kanban_view"/>
+            <field name="search_view_id" ref="deliverable_search_view"/>
+            <field name="target">main</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No deliverables found. Let's create one!
+                </p><p>
+                A deliverable is a collection of tasks.
+            </p>
+            </field>
+        </record>
+
+        <menuitem name="Deliverables" id="menu_deliverable_management" parent="program_menu"
+                  action="action_view_all_deliverables" sequence="1" groups="base.group_no_one,group_program_user"/>
+
+    </data>
+</odoo>
