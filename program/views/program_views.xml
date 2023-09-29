@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!--   Program Menu item     -->
+        <menuitem id="program_menu"
+                  name="Program"
+                  groups="program.group_program_manager,program.group_program_user"
+                  web_icon="program,static/description/icon.png"
+                  sequence="10"/>
+
+        <record id="program_kanban_view" model="ir.ui.view">
+            <field name="name">program.kanban</field>
+            <field name="model">program.program</field>
+            <field name="arch" type="xml">
+                <kanban class="oe_background_grey o_kanban_dashboard o_kanban_mobile"
+                        default_group_by="state"
+                        records_draggable="false">
+                    <field name="name"/>
+                    <field name="code"/>
+                    <field name="description"/>
+                    <field name="study_ids"/>
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div t-attf-class="oe_kanban_content oe_kanban_global_click o_kanban_get_form">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <strong><field name="name" string="Project Name"/></strong>
+                                        -
+                                        <strong><field name="code" string="Project Code"/></strong>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div t-if="record.date.raw_value or record.date_start.raw_value" class="text-muted o_row">
+                                            <span class="fa fa-clock-o mr-2" title="Dates"></span><field name="date_start"/>
+                                            <i t-if="record.date.raw_value and record.date_start.raw_value" class="fa fa-long-arrow-right mx-2 oe_read_only" aria-label="Arrow icon" title="Arrow"/>
+                                            <field name="date"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>&amp;nbsp;</div>
+                                <div class="row">
+                                    <div class="col-8">
+                                        <field name="study_ids" string="Studies"/>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="oe_kanban_bottom_right float-right">
+                                            <field name="user_id" widget="many2one_avatar_user"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+        <record id="program_form_view" model="ir.ui.view">
+            <field name="name">program.form</field>
+            <field name="model">program.program</field>
+            <field name="arch" type="xml">
+                <form string="Program" delete="0">
+                    <header>
+<!--                        <button name="toggle_active" type="object" class="oe_stat_button" icon="fa-archive" attrs="{'invisible':[('active','=',False)]}" groups="base.group_no_one,group_program_manager"/>-->
+<!--                        <button name="toggle_active" type="object" class="oe_stat_button" icon="fa-undo" attrs="{'invisible':[('active','=',True)]}" groups="base.group_no_one,group_program_manager"/>-->
+<!--                        <button name="action_view_all_studies" type="object" class="oe_stat_button" icon="fa-list-ul" attrs="{'invisible':[('study_ids','=',False)]}"/>-->
+<!--                        <button name="action_view_all_deliverables" type="object" class="oe_stat_button" icon="fa-list-ul" attrs="{'invisible':[('deliverable_ids','=',False)]}"/>-->
+<!--                        <button name="action_view_all_tasks" type="object" class="oe_stat_button" icon="fa-list-ul" attrs="{'invisible':[('task_ids','=',False)]}"/>-->
+                        <field name="state" widget="statusbar" options="{'clickable': '1', 'fold_field': 'fold'}" groups="program.group_program_manager"/>
+                    </header>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="code"/>
+                            <field name="description"/>
+                        </group>
+                        <group>
+                            <field name="active" invisible="1"/>
+                            <field name="user_id" string="Project Manager" widget="many2one_avatar_user" attrs="{'readonly':[('active','=',False)]}" domain="[('share', '=', False)]"/>
+                            <label for="date_start" string="Dates"/>
+                            <div name="dates" class="o_row">
+                                <field name="date_start" widget="daterange" options="{&quot;related_end_date&quot;: &quot;date&quot;}"/>
+                                <i class="fa fa-long-arrow-right mx-2 oe_edit_only" aria-label="Arrow icon" title="Arrow"/>
+                                <i class="fa fa-long-arrow-right mx-2 oe_read_only" aria-label="Arrow icon" title="Arrow" attrs="{'invisible': [('date_start', '=', False), ('date', '=', False)]}"/>
+                                <field name="date" widget="daterange" options="{&quot;related_start_date&quot;: &quot;date_start&quot;}"/>
+                            </div>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Studies">
+                            <field name="study_ids" mode="kanban">
+                                <kanban string="Studies"
+                                        default_group_by="program_id"
+                                        action_id="action_study_form">
+                                    <field name="name"/>
+                                    <field name="code"/>
+                                    <progressbar string="Progress" field="progress" />
+                                    <templates>
+                                        <t t-name="kanban-box">
+                                            <div t-attf-class="oe_kanban_content oe_kanban_global_click o_kanban_get_form">
+                                                <div class="row">
+                                                    <div class="col-12">
+                                                        <strong><field name="name"/></strong>
+                                                        -
+                                                        <strong><field name="code"/></strong>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-12">
+                                                        <div t-if="record.date.raw_value or record.date_start.raw_value" class="text-muted o_row">
+                                                            <span class="fa fa-clock-o mr-2" title="Dates"></span><field name="date_start"/>
+                                                            <i t-if="record.date.raw_value and record.date_start.raw_value" class="fa fa-long-arrow-right mx-2 oe_read_only" aria-label="Arrow icon" title="Arrow"/>
+                                                            <field name="date"/>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </t>
+                                    </templates>
+                                </kanban>
+                                <tree string="Studies">
+                                    <field name="name"/>
+                                    <field name="code"/>
+                                    <field name="date_start"/>
+                                    <field name="date" string="Deadline"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </form>
+            </field>
+        </record>
+
+        <record id="program_tree_view" model="ir.ui.view">
+            <field name="name">program.tree</field>
+            <field name="model">program.program</field>
+            <field name="arch" type="xml">
+                <tree string="Program">
+                    <field name="name"/>
+                    <field name="code"/>
+                    <field name="state"/>
+                    <field name="user_id"/>
+                    <field name="effective_working_hours"/>
+                    <field name="progress" widget="progressbar"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="program_graph_view" model="ir.ui.view">
+            <field name="name">program.graph</field>
+            <field name="model">program.program</field>
+            <field name="arch" type="xml">
+                <graph string="Program" type="bar">
+                    <field name="name"/>
+                    <field name="code"/>
+                </graph>
+            </field>
+        </record>
+
+        <record id="program_search_view" model="ir.ui.view">
+            <field name="name">program.search</field>
+            <field name="model">program.program</field>
+            <field name="arch" type="xml">
+                <search string="Program">
+                    <field name="name"/>
+                    <field name="code"/>
+                    <field name="description"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="action_program_graph" model="ir.actions.act_window">
+            <field name="name">Program Graph</field>
+            <field name="res_model">program.program</field>
+            <field name="view_mode">graph</field>
+            <field name="usage">menu</field>
+            <field name="view_id" ref="program_graph_view"/>
+        </record>
+
+        <record id="open_view_program_all" model="ir.actions.act_window">
+            <field name="name">Programs</field>
+            <field name="res_model">program.program</field>
+            <field name="domain">[]</field>
+            <field name="view_mode">kanban,tree,form,graph</field>
+            <field name="view_id" ref="program_kanban_view"/>
+            <field name="search_view_id" ref="program_search_view"/>
+            <field name="target">main</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No programs found. Let's create one!
+                </p><p>
+                A program is a collection of studies.
+            </p>
+            </field>
+        </record>
+
+        <record id="program_dashboard" model="ir.ui.view">
+            <field name="name">Program Dashboard</field>
+            <field name="model">board.board</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Dashboard">
+                    <board style="1-2">
+                        <column>
+                            <action name="%(open_view_program_all)d" string="Programs" help="Programs" icon="fa-list-ul">
+                                <p class="oe_stat_text">Programs</p>
+                                <p class="oe_stat_value">Programs</p>
+                            </action>
+                        </column>
+                        <column>
+                            <action name="%(action_program_graph)d"
+                                    string="Program Graph" help="Program Graph"
+                                    icon="fa-bar-chart"/>
+                        </column>
+                    </board>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_program_dashboard" model="ir.actions.act_window">
+            <field name="name">Program Dashboard</field>
+            <field name="res_model">board.board</field>
+            <field name="view_mode">form</field>
+            <field name="usage">menu</field>
+            <field name="view_id" ref="program_dashboard"/>
+        </record>
+
+        <menuitem id="menu_program_dashboard"
+                  name="Dashboard"
+                  action="action_program_dashboard"
+                  parent="menu_programs" sequence="1"/>
+
+        <menuitem id="menu_programs"
+                  name="Programs"
+                  action="action_program_dashboard"
+                  parent="program_menu"/>
+
+        <menuitem id="menu_programs_all"
+                    name="Programs"
+                    parent="menu_programs"
+                    action="open_view_program_all"
+                    sequence="3"/>
+
+        <menuitem id="menu_programs_configuration"
+                  name="Configuration"
+                  parent="program_menu"
+                  sequence="99"/>
+    </data>
+</odoo>

@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="sub_task_kanban_view" model="ir.ui.view">
+            <field name="name">sub_task.kanban</field>
+            <field name="model">program.sub_task</field>
+            <field name="arch" type="xml">
+                <kanban default_group_by="task_id"
+                        records_draggable="false"
+                        group_create="false">
+                    <field name="name"/>
+                    <field name="description"/>
+                    <field name="task_id"/>
+                    <field name="user_id"/>
+                    <field name="state"/>
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div class="oe_kanban_global_click">
+                                <div class="oe_kanban_details">
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <strong><field name="name"/></strong>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="float-right">
+                                                <field name="user_id" widget="many2one_avatar_user"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div>&amp;nbsp;</div>
+                                    <div class="col-6">
+                                        <div class="float-right">
+                                            <field name="state"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+        <record id="sub_task_form_view" model="ir.ui.view">
+            <field name="name">sub_task.form</field>
+            <field name="model">program.sub_task</field>
+            <field name="arch" type="xml">
+                <form string="Sub Task">
+                    <group>
+                        <group>
+                            <field name="company_id" invisible="1"/>
+                            <field name="name"/>
+                            <field name="description"/>
+                            <field name="task_id"/>
+                        </group>
+                        <group>
+                            <field name="user_id"/>
+                            <field name="state"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Phases">
+                            <field name="sub_task_phase_ids">
+                                <kanban default_group_by="user_id"
+                                        records_draggable="false"
+                                        group_create="false" create="0" delete="0" edit="0">
+                                    <field name="name"/>
+                                    <field name="description"/>
+                                    <field name="phase_id"/>
+                                    <field name="sub_task_id"/>
+                                    <field name="user_id"/>
+                                    <field name="status"/>
+                                    <templates>
+                                        <t t-name="kanban-box">
+                                            <div class="oe_kanban_global_click">
+                                                <div class="oe_kanban_details">
+                                                    <div class="row">
+                                                        <div class="col-6">
+                                                            <strong><field name="name"/></strong>
+                                                        </div>
+                                                        <div class="col-6">
+                                                            <div class="float-right">
+                                                                <field name="user_id" widget="many2one_avatar_user"/>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div>&amp;nbsp;</div>
+                                                    <div class="row">
+                                                        <div class="col-6">
+                                                            <div>
+                                                                <field name="status"/>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </t>
+                                    </templates>
+                                </kanban>
+                            </field>
+                        </page>
+                    </notebook>
+                </form>
+            </field>
+        </record>
+
+        <record id="sub_task_tree_view" model="ir.ui.view">
+            <field name="name">sub_task.tree</field>
+            <field name="model">program.sub_task</field>
+            <field name="arch" type="xml">
+                <tree string="Sub Tasks">
+                    <field name="name"/>
+                    <field name="task_id"/>
+                    <field name="user_id"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="sub_task_graph_view" model="ir.ui.view">
+            <field name="name">sub_task.graph</field>
+            <field name="model">program.sub_task</field>
+            <field name="arch" type="xml">
+                <graph string="Sub Tasks">
+                    <field name="name"/>
+                    <field name="description"/>
+                    <field name="task_id"/>
+                    <field name="user_id"/>
+                </graph>
+            </field>
+        </record>
+
+        <record id="sub_task_search_view" model="ir.ui.view">
+            <field name="name">sub_task.search</field>
+            <field name="model">program.sub_task</field>
+            <field name="arch" type="xml">
+                <search string="Sub Task">
+                    <field name="name"/>
+                    <field name="task_id"/>
+                    <field name="user_id"/>
+                    <field name="state"/>
+                    <group expand="0" string="Group By">
+                        <filter string="User" name="group_user" context="{'group_by':'user_id'}"/>
+                        <filter string="Task" name="group_task" context="{'group_by':'task_id'}"/>
+                        <filter string="Status" name="group_state" context="{'group_by':'state'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record id="action_sub_task" model="ir.actions.act_window">
+            <field name="name">Sub Tasks</field>
+            <field name="res_model">program.sub_task</field>
+            <field name="view_mode">tree,form,kanban,graph</field>
+            <field name="view_id" ref="program.sub_task_tree_view"/>
+            <field name="domain">[]</field>
+            <field name="context">{'search_default_group_task': 1}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No tasks found. Let's create one!
+                </p>
+            </field>
+        </record>
+
+        <menuitem id="menu_sub_task"
+                  name="Sub Tasks"
+                  parent="program_menu"
+                  action="action_sub_task"
+                  sequence="8"
+                  groups="base.group_no_one,group_program_user"/>
+
+        <menuitem id="menu_sub_tasks"
+                    name="Sub Tasks"
+                    parent="menu_sub_task"
+                    action="action_sub_task"
+                    sequence="1"
+                    groups="base.group_no_one,group_program_user"/>
+
+        <record id="sub_task_phase_form_view" model="ir.ui.view">
+            <field name="name">sub_task.phase.form</field>
+            <field name="model">program.sub_task.phase</field>
+            <field name="arch" type="xml">
+                <form string="Sub Task Phase" create="0">
+                    <group>
+                        <group>
+                            <field name="company_id" invisible="1"/>
+                            <field name="name"/>
+                            <field name="description"/>
+                            <field name="phase_id"/>
+                            <field name="sub_task_id"/>
+                        </group>
+                        <group>
+                            <field name="user_id"/>
+                            <field name="status"/>
+                        </group>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record id="sub_task_phase_tree_view" model="ir.ui.view">
+            <field name="name">sub_task.phase.tree</field>
+            <field name="model">program.sub_task.phase</field>
+            <field name="arch" type="xml">
+                <tree string="Sub Task Phases" create="0">
+                    <field name="name"/>
+                    <field name="phase_id"/>
+                    <field name="user_id"/>
+                    <field name="status"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="sub_task_phase_graph_view" model="ir.ui.view">
+            <field name="name">sub_task.phase.graph</field>
+            <field name="model">program.sub_task.phase</field>
+            <field name="arch" type="xml">
+                <graph string="Sub Task Phases">
+                    <field name="name"/>
+                    <field name="description"/>
+                    <field name="phase_id"/>
+                    <field name="sub_task_id"/>
+                    <field name="user_id"/>
+                </graph>
+            </field>
+        </record>
+
+        <record id="sub_task_phase_search_view" model="ir.ui.view">
+            <field name="name">sub_task.phase.search</field>
+            <field name="model">program.sub_task.phase</field>
+            <field name="arch" type="xml">
+                <search string="Sub Task Phase">
+                    <field name="name"/>
+                    <field name="phase_id"/>
+                    <field name="sub_task_id"/>
+                    <field name="user_id"/>
+                    <!--<filter name="user_id" string="User" domain="[]" context="{'group_by':'user_id'}"/>
+                    <filter name="phase_id" string="Phase" domain="[]" context="{'group_by':'phase_id'}"/>
+                    <filter name="sub_task_id" string="Sub Task" domain="[]" context="{'group_by':'sub_task_id'}"/>-->
+                    <group expand="0" string="Group By">
+                        <filter string="User" name="group_user" context="{'group_by':'user_id'}"/>
+                        <filter string="Phase" name="group_phase" context="{'group_by':'phase_id'}"/>
+                        <filter string="Sub Task" name="group_sub_task" context="{'group_by':'sub_task_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record id="action_sub_task_phase" model="ir.actions.act_window">
+            <field name="name">Sub Task Phases</field>
+            <field name="res_model">program.sub_task.phase</field>
+            <field name="view_mode">tree,form,graph</field>
+            <field name="view_id" ref="program.sub_task_phase_tree_view"/>
+            <field name="domain">[]</field>
+            <field name="context">{'search_default_group_sub_task': 1}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No phases found. Let's create one!
+                </p>
+            </field>
+        </record>
+
+        <menuitem id="menu_sub_task_phase"
+                  name="Sub Task Phases"
+                  parent="menu_sub_task"
+                  action="action_sub_task_phase"
+                  sequence="9"
+                  groups="base.group_no_one,group_program_user"/>
+
+
+
+    </data>
+</odoo>

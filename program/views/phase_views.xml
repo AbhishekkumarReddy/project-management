@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="subtask_phase_tree_view" model="ir.ui.view">
+            <field name="name">subtask.phase.tree</field>
+            <field name="model">subtask.phase</field>
+            <field name="arch" type="xml">
+                <tree string="Subtask Phases">
+                    <field name="name"/>
+                    <field name="end_phase"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="subtask_phase_form_view" model="ir.ui.view">
+            <field name="name">subtask.phase.form</field>
+            <field name="model">subtask.phase</field>
+            <field name="arch" type="xml">
+                <form string="Subtask Phase">
+                    <group>
+                        <group>
+                            <field name="company_id" invisible="1"/>
+                            <field name="name"/>
+                            <field name="end_phase"/>
+                            <field name="description"/>
+                        </group>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record id="subtask_phase_search_view" model="ir.ui.view">
+            <field name="name">subtask.phase.search</field>
+            <field name="model">subtask.phase</field>
+            <field name="arch" type="xml">
+                <search string="Subtask Phase">
+                    <field name="name"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="subtask_phase_action" model="ir.actions.act_window">
+            <field name="name">Subtask Phases</field>
+            <field name="res_model">subtask.phase</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[]</field>
+        </record>
+
+        <menuitem id="menu_subtask_phase"
+                  name="Phases"
+                  parent="program_menu"
+                  action="subtask_phase_action"
+                  sequence="10" groups="group_program_manager"/>
+    </data>
+</odoo>
